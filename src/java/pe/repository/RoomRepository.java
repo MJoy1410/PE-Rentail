@@ -59,4 +59,16 @@ public class RoomRepository {
         return list;
     }
 
+    public List<RoomForRent> getByLocation(String location) {
+        EntityManager em = JPAUtils.getEntityManager();
+        String jpql = "SELECT r FROM RoomForRent r WHERE r.location LIKE :loc";
+        TypedQuery<RoomForRent> query = em.createQuery(jpql, RoomForRent.class);
+        query.setParameter("loc", "%" + location + "%");
+        
+        List<RoomForRent> list = query.getResultList();
+        em.close();
+        return list;
+
+    }
+
 }

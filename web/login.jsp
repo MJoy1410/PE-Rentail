@@ -13,5 +13,14 @@
     </head>
     <body>
         <!--your code here-->
+        <form action="MainController" method="post">
+            <label>Enter username: <input type="text" name="username"></label> <br/><!-- comment -->
+            <label>Enter password: <input type="password" name="password"></label><br/><!-- comment -->
+            
+            <input type="submit" value="Login">
+            <input type="hidden" name="action" value="login">
+        </form>
+        
+        ${ERROR}
     </body>
 </html>

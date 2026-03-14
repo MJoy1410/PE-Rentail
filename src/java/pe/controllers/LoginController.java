@@ -1,23 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package pe.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import pe.model.Account;
+import pe.repository.AccountRepository;
 
 /**
  *
- * @author Computing Fundamental - HCM Campus
+ * @author Trần Minh Tuấn
  */
-public class MainController extends HttpServlet {
-
-    private static final String LOGIN = "login.jsp";
+@WebServlet(name = "LoginController", urlPatterns = {"/Login"})
+public class LoginController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,35 +35,6 @@ public class MainController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN;
-        try {
-            String action = request.getParameter("action");
-            //-----            your code here   --------------------------------
-            switch (action) {
-                case "login":
-                    url = "Login";
-                    break;
-                case "logout":
-                    url = "Logout";
-                    break;
-                case "search":
-                    url = "Search";
-                    break;
-                case "delete":
-                    url = "Delete";
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-            //-----            your code here   --------------------------------
-        } catch (Exception e) {
-            log("error at MainController: " + e.toString());
-        } finally {
-            request.getRequestDispatcher(url).forward(request, response);
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -75,7 +49,6 @@ public class MainController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     /**
@@ -89,7 +62,20 @@ public class MainController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+        
+        String user = request.getParameter("username");
+        String pass = request.getParameter("password");
+        
+        Account a = new AccountRepository().checkLogin(user, pass);
+        
+        if (a != null) {
+            session.setAttribute("user", a);
+            request.getRequestDispatcher("welcome.jsp").forward(request, response);
+        }else{
+            request.setAttribute("ERROR", "Invalid password or username");
+            response.sendRedirect("login.jsp");
+        }
     }
 
     /**
